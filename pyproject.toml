@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pointing"
-version = "0.0.0"
+version = "0.0.2"
 description = "pointclasses for deltaclasses"
 readme = "README.rst"
 authors = [
@@ -23,3 +23,7 @@ requires-python = ">=3.11"
 
 [project.license]
 file = "LICENSE.txt"
+
+[project.urls]
+download = "https://pypi.org/project/pointing/#files"
+source = "https://github.com/johannes-programming/pointing"
