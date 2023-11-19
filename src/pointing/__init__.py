@@ -1,17 +1,28 @@
+import collections as _collections
 import dataclasses as _dataclasses
+import typing as _typing
+
+
+class _Empty:
+    pass
 
 class _pointclass:
     @classmethod
     def deltaclass(cls):
         return cls._deltaclass
-    @classmethod
-    def make(cls, *args, **kwargs):
-        delta = cls._deltaclass(*args, **kwargs)
-        return cls(delta)
-    def __post_init__(self, *args, **kwargs):
-        if type(self.delta_from_origin) is not self.deltaclass():
-            msg = f"{self.delta_from_origin} is not an instance of {self.deltaclass()}."
-            raise TypeError(msg)
+    @property
+    def delta_from_origin(self):
+        return self._delta_from_origin
+    def __eq__(self, other):
+        cls = type(self)
+        if type(other) is not cls:
+            return False
+        return self.delta_from_origin == other.delta_from_origin
+    def __hash__(self):
+        return self.delta_from_origin.__hash__()
+    def __init__(cls, *args, **kwargs):
+        delta = cls.deltaclass()(*args, **kwargs)
+        self._delta_from_origin = delta
     def __add__(self, other):
         cls = type(self)
         delta = self.delta_from_origin + other
@@ -28,9 +39,4 @@ class _pointclass:
             return cls(self.delta_from_origin - other)
 
 def pointclass(typename, deltaclass):
-    baseclass = type(typename, (_pointclass,), {})
-    baseclass.delta_from_origin = _dataclasses.field()
-    baseclass.__annotations__['delta_from_origin'] = deltaclass
-    baseclass._deltaclass = deltaclass
-    dataclass = _dataclasses.dataclass(frozen=True)(baseclass)
-    return dataclass
+    return type(typename, (_pointclass,), {'_deltaclass':deltaclass})
